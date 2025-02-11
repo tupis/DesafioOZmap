@@ -90,7 +90,14 @@ function loadDTOs() {
       if (fs.statSync(fullPath).isDirectory()) {
         readFiles(fullPath);
       } else if (file.endsWith(".dto.ts")) {
-        const dtoName = file.replace(".dto.ts", "");
+        const capitalize = (phrase: string) =>
+          phrase
+            .split("-")
+            .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+            .join("") + "Dto";
+
+        const dtoName = capitalize(file.replace(".dto.ts", ""));
+
         schemas[dtoName] = {
           type: "object",
           properties: extractDTOFields(fullPath),
