@@ -1,7 +1,7 @@
 import { ReturnModelType } from "@typegoose/typegoose";
 
 export class BaseRepository<T> {
-  private readonly model: ReturnModelType<new () => T>;
+  public readonly model: ReturnModelType<new () => T>;
 
   constructor(model: ReturnModelType<new () => T>) {
     this.model = model;
@@ -30,6 +30,15 @@ export class BaseRepository<T> {
 
   public async restore(id: string): Promise<void> {
     await this.model.findByIdAndUpdate(id, { deletedAt: null }).exec();
+  }
+
+  public async updateById(id: string, doc: Partial<T>): Promise<T | null> {
+    const document = await this.findById(id);
+    if (!document) return null;
+
+    return (await this.model
+      .findOneAndUpdate({ id }, doc)
+      .exec()) as unknown as T;
   }
 }
 
