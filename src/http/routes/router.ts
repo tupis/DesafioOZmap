@@ -41,5 +41,31 @@ export class Router {
       middleware: [validationMiddlewareDto(RegisterUserDto)],
       public: true,
     });
+
+    // USERS
+    this.server.on({
+      path: "/users",
+      method: "get",
+      handler: async (req, res) => {
+        return await UserController.getAll(req, res);
+      },
+      public: true,
+    });
+
+    this.server.on({
+      path: "/users/:id",
+      method: "get",
+      handler: async (req, res) => {
+        return await UserController.getById(req, res);
+      },
+    });
+
+    this.server.on({
+      path: "/users/:id",
+      method: "put",
+      handler: async (req, res) => {
+        return await UserController.updateById(req, res);
+      },
+    });
   }
 }
