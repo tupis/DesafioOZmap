@@ -13,3 +13,7 @@ export function verifyToken(token: string): jwt.JwtPayload | string {
     throw new Error("Invalid Token: " + error);
   }
 }
+
+export function decodeToken(token: string): jwt.JwtPayload {
+  return jwt.decode(token) as jwt.JwtPayload;
+}
