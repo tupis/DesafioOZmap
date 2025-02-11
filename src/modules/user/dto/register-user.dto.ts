@@ -12,13 +12,19 @@ import {
   registerDecorator,
   ValidationArguments,
   ValidationOptions,
+  Max,
+  Min,
 } from "class-validator";
 
 class Coordinates {
   @IsNumber()
+  @Min(-90, { message: "Latitude deve ser maior que -90." })
+  @Max(90, { message: "Latitude deve ser menor que 90." })
   latitude: number;
 
   @IsNumber()
+  @Min(-180, { message: "Longitude deve ser maior que -180." })
+  @Max(180, { message: "Longitude deve ser menor que 180." })
   longitude: number;
 }
 
@@ -26,14 +32,25 @@ class Address {
   @IsString()
   street: string;
 
-  @IsNumber()
-  number: number;
+  @IsString()
+  number: string;
 
   @IsString()
   city: string;
 
   @IsString()
   state: string;
+
+  @IsString()
+  country: string;
+
+  @IsString()
+  zipCode: string;
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => Coordinates)
+  location?: Coordinates;
 }
 
 export class RegisterUserDto {
@@ -61,6 +78,7 @@ export class RegisterUserDto {
   validation: boolean;
 }
 
+//TODO: move to shared
 export function IsAddressOrCoordinates(validationOptions?: ValidationOptions) {
   return function (object: Object, propertyName: string) {
     registerDecorator({
@@ -69,18 +87,15 @@ export function IsAddressOrCoordinates(validationOptions?: ValidationOptions) {
       propertyName: propertyName,
       options: validationOptions,
       validator: {
-        validate(value: any, args: ValidationArguments) {
-          const object = args.object as any;
-          if (
-            (object.address && object.coordinates) || // Ambos fornecidos
-            (!object.address && !object.coordinates) // Nenhum fornecido
-          ) {
-            return false; // Invalid
-          }
-          return true; // Valid
+        validate(_: any, args: ValidationArguments) {
+          const obj = args.object as RegisterUserDto;
+          return (
+            (obj.address && !obj.coordinates) ||
+            (!obj.address && obj.coordinates)
+          );
         },
         defaultMessage() {
-          return "Você deve fornecer apenas um endereço ou coordenadas, não ambos ou nenhum.";
+          return "Você deve fornecer **apenas um** entre endereço e coordenadas.";
         },
       },
     });
