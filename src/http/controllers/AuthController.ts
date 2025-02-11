@@ -4,7 +4,7 @@ import { UserService } from "@modules/user/services/UserService";
 import { LoginUserDto } from "@modules/user/dto/login-user.dto";
 import { RegisterUserDto } from "@modules/user/dto/register-user.dto";
 
-export class AuthController {
+class AuthController {
   constructor(private readonly userService: UserService = getUserService()) {}
   async login(request: Request, response: Response): Promise<Response> {
     const { data, status } = await this.userService.authenticateUser(
@@ -20,3 +20,5 @@ export class AuthController {
     return response.status(status).json(data);
   }
 }
+
+export default new AuthController();
