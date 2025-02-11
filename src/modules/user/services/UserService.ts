@@ -6,11 +6,25 @@ import { LoginUserDto } from "../dto/login-user.dto";
 import { RegisterUserDto } from "../dto/register-user.dto";
 import { ResponseDto } from "@shared/dto/response.dto";
 import { HttpStatus } from "@statusCode";
+import { AddressRepository } from "../repositories/AddressRepository";
+import { GeoLocationService } from "@shared/services/GeoLocationService";
 
 export class UserService {
-  constructor(private userRepository: UserRepository) {}
+  constructor(
+    private readonly userRepository: UserRepository,
+    private readonly addressRepository: AddressRepository,
+    private readonly geoLocationService: GeoLocationService,
+  ) {}
 
-  async createUser(data: RegisterUserDto): Promise<ResponseDto> {
+  async teste() {
+    return await this.addressRepository.findAll();
+  }
+
+  async createUser({
+    address,
+    coordinates,
+    ...data
+  }: RegisterUserDto): Promise<ResponseDto> {
     const existingUser = await this.userRepository.findByEmail(
       data.email as string,
     );
@@ -26,7 +40,27 @@ export class UserService {
 
     data.password = hashedPassword;
 
-    const user = await this.userRepository.create(data);
+    let registerAddress = null;
+
+    if (coordinates) {
+      registerAddress =
+        await this.geoLocationService.getAddressFromCoordinates(coordinates);
+    } else if (address) {
+      registerAddress =
+        await this.geoLocationService.getCoordinatesFromAddress(address);
+    }
+
+    if (!registerAddress) {
+      return new ResponseDto({
+        data: "Endereço não encontrado",
+        status: HttpStatus.BAD_REQUEST,
+      });
+    }
+
+    const user = await this.userRepository.create({
+      ...data,
+      address: registerAddress._id,
+    });
 
     const token = generateToken({ email: data.email, id: user._id });
 
@@ -75,5 +109,9 @@ export class UserService {
   async deleteUserById(id: string) {
     const user = await this.getUserById(id);
     return await this.userRepository.softDelete(user!._id);
+  }
+
+  async updateUserById(id: string, user: Partial<User>) {
+    return await this.userRepository.updateById(id, user);
   }
 }
