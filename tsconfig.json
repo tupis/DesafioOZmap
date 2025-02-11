@@ -17,7 +17,8 @@
       "@config/*": ["src/config/*"],
       "@shared/*": ["src/shared/*"],
       "@utils/*": ["src/utils/*"],
-      "@statusCode": ["src/types/http-status-code"]
+      "@statusCode": ["src/types/http-status-code"],
+      "@libs": ["src/libs/*"]
     }
   },
   "include": ["src/**/*.ts"],
