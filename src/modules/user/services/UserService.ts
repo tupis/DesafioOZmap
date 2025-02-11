@@ -8,6 +8,7 @@ import { ResponseDto } from "@shared/dto/response.dto";
 import { HttpStatus } from "@statusCode";
 import { AddressRepository } from "../repositories/AddressRepository";
 import { GeoLocationService } from "@shared/services/GeoLocationService";
+import { UpdateUserDto } from "../dto/update-user.dto";
 
 export class UserService {
   constructor(
@@ -15,10 +16,6 @@ export class UserService {
     private readonly addressRepository: AddressRepository,
     private readonly geoLocationService: GeoLocationService,
   ) {}
-
-  async teste() {
-    return await this.addressRepository.findAll();
-  }
 
   async createUser({
     address,
@@ -111,7 +108,28 @@ export class UserService {
     return await this.userRepository.softDelete(user!._id);
   }
 
-  async updateUserById(id: string, user: Partial<User>) {
-    return await this.userRepository.updateById(id, user);
+  async updateUserById(
+    id: string,
+    { address, coordinates, ...data }: UpdateUserDto,
+  ): Promise<User | null> {
+    let registerAddress = null;
+
+    if (coordinates) {
+      registerAddress =
+        await this.geoLocationService.getAddressFromCoordinates(coordinates);
+    } else if (address) {
+      registerAddress =
+        await this.geoLocationService.getCoordinatesFromAddress(address);
+    }
+
+    if (!registerAddress) {
+      return null;
+    }
+
+    return await this.userRepository.updateById(id, {
+      ...data,
+      password: await bcrypt.hash(data.password, 8),
+      address: registerAddress._id,
+    });
   }
 }
