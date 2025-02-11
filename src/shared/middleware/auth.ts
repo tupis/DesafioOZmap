@@ -8,6 +8,10 @@ export function authMiddleware(
   res: Response,
   next: NextFunction,
 ): void {
+  if (req.path.startsWith("/api/docs")) {
+    return next();
+  }
+
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1];
 
