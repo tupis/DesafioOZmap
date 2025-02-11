@@ -1,6 +1,7 @@
-import { prop, getModelForClass } from "@typegoose/typegoose";
+import { prop, getModelForClass, Ref } from "@typegoose/typegoose";
 import { BaseEntity } from "@shared/database/entities/BaseEntity";
 import { SchemaTypes } from "mongoose";
+import { Address } from "./Address";
 
 export class User extends BaseEntity {
   @prop({ type: SchemaTypes.String, required: true })
@@ -12,21 +13,9 @@ export class User extends BaseEntity {
   @prop({ type: SchemaTypes.String, required: true })
   public password!: string;
 
-  @prop({ type: SchemaTypes.Map, required: false })
-  public coordinates?: {
-    longitude: number;
-    latitude: number;
-  };
-
-  @prop({ type: SchemaTypes.Map, required: false })
-  public address?: {
-    street: string;
-    number: number;
-    city: string;
-    state: string;
-  };
+  @prop({ ref: () => Address, required: false })
+  public address?: Ref<Address>;
 }
 
 const UserModel = getModelForClass(User);
-
 export { UserModel };
