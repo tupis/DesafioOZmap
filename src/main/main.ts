@@ -1,24 +1,26 @@
 import "reflect-metadata";
 import "dotenv/config";
-import express from "express";
-import { AppRouter, PublicRouter } from "@http/routes";
+import { HttpServer } from "@http/routes/httpRouter";
+import { Router } from "@http/routes/router";
 import { Logger } from "@shared/logger";
-import { authMiddleware } from "@shared/middleware/auth";
 import { connectDatabase } from "@shared/database/mongodb";
+import { setupSwagger } from "src/swagger";
 
-const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(express.json());
-app.use(PublicRouter);
-app.use(authMiddleware);
-app.use("/api", AppRouter);
+const server = new HttpServer();
+
+const router = new Router(server);
+router.init();
+
+setupSwagger(server.getApp());
 
 connectDatabase()
   .then(() => {
     Logger.info("Conexão com o banco de dados estabelecida com sucesso.");
-    app.listen(PORT, () => {
-      Logger.info("Servidor rodando na porta " + PORT);
+    server.getApp().listen(PORT, () => {
+      Logger.info(`🚀 Servidor rodando na porta ${PORT}`);
+      Logger.info(`📄 Swagger disponível em http://localhost:${PORT}/api/docs`);
     });
   })
   .catch((error) => {
