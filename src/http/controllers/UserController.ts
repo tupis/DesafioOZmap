@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { getUserService } from "@modules/user/UserServiceFactory";
 import { UserService } from "@modules/user/services/UserService";
 
-export class UserController {
+class UserController {
   constructor(private readonly userService: UserService = getUserService()) {}
   async getAll(request: Request, response: Response): Promise<Response> {
     const users = await this.userService.getAllUsers();
@@ -25,3 +25,5 @@ export class UserController {
     return response.status(204).send();
   }
 }
+
+export default new UserController();
