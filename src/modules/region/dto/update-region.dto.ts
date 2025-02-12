@@ -1,4 +1,10 @@
-import { IsObject, IsArray, ValidateNested, IsString } from "class-validator";
+import {
+  IsObject,
+  IsArray,
+  ValidateNested,
+  IsString,
+  IsOptional,
+} from "class-validator";
 import { Type } from "class-transformer";
 
 class LocationDto {
@@ -16,4 +22,14 @@ export class UpdateRegionDto {
   @ValidateNested()
   @Type(() => LocationDto)
   location!: LocationDto;
+
+  @IsString()
+  name!: string;
+
+  @IsString()
+  @IsOptional()
+  observation?: string;
+
+  @IsString()
+  userId!: string;
 }

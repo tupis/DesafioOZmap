@@ -2,12 +2,14 @@ import { ResponseDto } from "@shared/dto/response.dto";
 import { CreateRegionDto } from "../dto/create-region.dto";
 import { RegionRepository } from "../repositories/RegionRepository";
 import { HttpStatus } from "@statusCode";
+import { FindRegionsContainingPointDto } from "../dto/find-region-containing-point.dto";
+import { FindRegionsNearPointDto } from "../dto/find-regions-near-point.dto";
 
 export class RegionService {
   constructor(private readonly regionRepository: RegionRepository) {}
 
   async create(data: CreateRegionDto) {
-    const region = this.regionRepository.create(data);
+    const region = await this.regionRepository.create(data);
 
     if (!region)
       return new ResponseDto({
@@ -73,6 +75,37 @@ export class RegionService {
 
     return new ResponseDto({
       data: "Region deleted",
+      status: HttpStatus.OK,
+    });
+  }
+
+  async findRegionsContainingPoint({
+    latitude,
+    longitude,
+  }: FindRegionsContainingPointDto) {
+    const regions = await this.regionRepository.findRegionsContainingPoint({
+      type: "Point",
+      coordinates: [latitude, longitude],
+    });
+
+    return new ResponseDto({
+      data: regions,
+      status: HttpStatus.OK,
+    });
+  }
+
+  async findRegionsNearPoint(
+    { latitude, longitude, maxDistance }: FindRegionsNearPointDto,
+    userId: string,
+  ) {
+    const regions = await this.regionRepository.findRegionsNearPoint(
+      { coordinates: [latitude, longitude], type: "Point" },
+      maxDistance,
+      userId,
+    );
+
+    return new ResponseDto({
+      data: regions,
       status: HttpStatus.OK,
     });
   }

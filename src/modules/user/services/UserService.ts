@@ -77,12 +77,19 @@ export class UserService {
   async authenticateUser(data: LoginUserDto): Promise<ResponseDto> {
     const user = await this.userRepository.findByEmail(data.email);
     if (!user) {
-      throw new Error("Usuário não encontrado");
+      return new ResponseDto({
+        data: "Usuário não encontrado",
+        status: HttpStatus.NOT_FOUND,
+      });
     }
 
     const isPasswordValid = await bcrypt.compare(data.password, user.password);
+
     if (!isPasswordValid) {
-      throw new Error("Senha inválida");
+      return new ResponseDto({
+        data: "Email ou Senha inválidos",
+        status: HttpStatus.BAD_REQUEST,
+      });
     }
 
     const token = generateToken({ id: user._id, email: user.email });
@@ -91,7 +98,7 @@ export class UserService {
         user,
         token,
       },
-      status: 200,
+      status: HttpStatus.OK,
     });
   }
 
