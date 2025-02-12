@@ -12,5 +12,5 @@ export class BaseEntity {
   public updatedAt!: Date;
 
   @prop({ type: SchemaTypes.Date, default: null })
-  public deletedAt!: Date;
+  public deletedAt!: Date | null;
 }
