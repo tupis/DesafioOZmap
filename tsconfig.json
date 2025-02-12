@@ -8,6 +8,7 @@
     "esModuleInterop": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
+    "resolveJsonModule": true,
     "strictPropertyInitialization": false,
     "baseUrl": "./",
     "paths": {
@@ -18,9 +19,10 @@
       "@shared/*": ["src/shared/*"],
       "@utils/*": ["src/utils/*"],
       "@statusCode": ["src/types/http-status-code"],
-      "@libs": ["src/libs/*"]
+      "@libs": ["src/libs/*"],
+      "@swagger": ["src/swagger"]
     }
   },
   "include": ["src/**/*.ts"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "jest.config.ts"]
 }
