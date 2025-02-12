@@ -35,13 +35,19 @@ export class HttpServer {
       async (req: Request, res: Response) => {
         try {
           const result = await handler(req, res);
-          if ("body" in result) {
-            res.status(result.statusCode || 200).json(result.body);
-          } else {
-            res.status(200).json(result);
+          if (!res.headersSent) {
+            if (result && "body" in result) {
+              res.status(result.statusCode || 200).json(result.body);
+            } else {
+              res.status(200).json(result);
+            }
           }
         } catch (error) {
-          res.status(500).json({ message: "Erro interno no servidor", error });
+          if (!res.headersSent) {
+            res
+              .status(500)
+              .json({ message: "Erro interno no servidor", error });
+          }
         }
       },
     );
