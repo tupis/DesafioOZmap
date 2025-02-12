@@ -1,7 +1,16 @@
 import { BaseEntity } from "@shared/database/entities/BaseEntity";
-import { prop, getModelForClass, index } from "@typegoose/typegoose";
+import {
+  prop,
+  getModelForClass,
+  index,
+  modelOptions,
+  Severity,
+} from "@typegoose/typegoose";
 import { SchemaTypes } from "mongoose";
 
+@modelOptions({
+  options: { allowMixed: Severity.ALLOW },
+})
 @index({ location: "2dsphere" })
 export class Address extends BaseEntity {
   @prop({ type: SchemaTypes.String, required: true })
