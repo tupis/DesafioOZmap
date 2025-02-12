@@ -4,7 +4,7 @@ import { HttpServer } from "@http/routes/httpRouter";
 import { Router } from "@http/routes/router";
 import { Logger } from "@shared/logger";
 import { connectDatabase } from "@shared/database/mongodb";
-import { setupSwagger } from "src/swagger";
+import { setupSwagger } from "@swagger";
 
 const PORT = process.env.PORT || 3000;
 
