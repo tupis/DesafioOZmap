@@ -5,6 +5,9 @@ import { LoginUserDto } from "@modules/user/dto/login-user.dto";
 import { RegisterUserDto } from "@modules/user/dto/register-user.dto";
 import UserController from "@http/controllers/UserController";
 import RegionsController from "@http/controllers/RegionsController";
+import { FindRegionsContainingPointDto } from "@modules/region/dto/find-region-containing-point.dto";
+import { FindRegionsNearPointDto } from "@modules/region/dto/find-regions-near-point.dto";
+
 export class Router {
   private server: HttpServer;
 
@@ -61,6 +64,14 @@ export class Router {
 
     this.server.on({
       path: "/users/:id",
+      method: "delete",
+      handler: async (req, res) => {
+        return await UserController.deleteById(req, res);
+      },
+    });
+
+    this.server.on({
+      path: "/users/:id",
       method: "put",
       handler: async (req, res) => {
         return await UserController.updateById(req, res);
@@ -99,6 +110,24 @@ export class Router {
       handler: async (req, res) => {
         return await RegionsController.create(req, res);
       },
+    });
+
+    this.server.on({
+      path: "/regions/find-regions-containing-point",
+      method: "post",
+      handler: async (req, res) => {
+        return await RegionsController.findRegionsContainingPoint(req, res);
+      },
+      middleware: [validationMiddlewareDto(FindRegionsContainingPointDto)],
+    });
+
+    this.server.on({
+      path: "/regions/find-regions-near-point",
+      method: "post",
+      handler: async (req, res) => {
+        return await RegionsController.findRegionsNearPointDto(req, res);
+      },
+      middleware: [validationMiddlewareDto(FindRegionsNearPointDto)],
     });
   }
 }
