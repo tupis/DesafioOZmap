@@ -15,21 +15,25 @@ export class BaseRepository<T> {
     const result = await this.model
       .findById(id)
       .where({ deletedAt: null })
+      .lean()
       .exec();
     return result as unknown as T | null;
   }
 
   public async findAll(): Promise<T[]> {
-    const result = await this.model.find({ deletedAt: null }).exec();
+    const result = await this.model.find({ deletedAt: null }).lean().exec();
     return result as unknown as T[];
   }
 
   public async softDelete(id: string): Promise<void> {
-    await this.model.findByIdAndUpdate(id, { deletedAt: new Date() }).exec();
+    await this.model
+      .findByIdAndUpdate(id, { deletedAt: new Date() })
+      .lean()
+      .exec();
   }
 
   public async restore(id: string): Promise<void> {
-    await this.model.findByIdAndUpdate(id, { deletedAt: null }).exec();
+    await this.model.findByIdAndUpdate(id, { deletedAt: null }).lean().exec();
   }
 
   public async updateById(id: string, doc: Partial<T>): Promise<T | null> {
@@ -38,6 +42,7 @@ export class BaseRepository<T> {
 
     return (await this.model
       .findOneAndUpdate({ id }, doc)
+      .lean()
       .exec()) as unknown as T;
   }
 }
@@ -87,7 +92,7 @@ export class BaseRepository<T> {
 //         .findById(id)
 //         .where({ deletedAt: null })
 //         .session(session)
-//         .exec();
+//         .lean().exec();
 //       return result as unknown as T | null;
 //     }, session);
 //   }
@@ -97,7 +102,7 @@ export class BaseRepository<T> {
 //       const result = await this.model
 //         .find({ deletedAt: null })
 //         .session(session)
-//         .exec();
+//         .lean().exec();
 //       return result as unknown as T[];
 //     }, session);
 //   }
@@ -107,7 +112,7 @@ export class BaseRepository<T> {
 //       await this.model
 //         .findByIdAndUpdate(id, { deletedAt: new Date() })
 //         .session(session)
-//         .exec();
+//         .lean().exec();
 //     }, session);
 //   }
 
@@ -116,7 +121,7 @@ export class BaseRepository<T> {
 //       await this.model
 //         .findByIdAndUpdate(id, { deletedAt: null })
 //         .session(session)
-//         .exec();
+//         .lean().exec();
 //     }, session);
 //   }
 // }
