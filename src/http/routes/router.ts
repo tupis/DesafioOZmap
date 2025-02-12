@@ -4,7 +4,7 @@ import AuthController from "@http/controllers/AuthController";
 import { LoginUserDto } from "@modules/user/dto/login-user.dto";
 import { RegisterUserDto } from "@modules/user/dto/register-user.dto";
 import UserController from "@http/controllers/UserController";
-
+import RegionsController from "@http/controllers/RegionsController";
 export class Router {
   private server: HttpServer;
 
@@ -49,7 +49,6 @@ export class Router {
       handler: async (req, res) => {
         return await UserController.getAll(req, res);
       },
-      public: true,
     });
 
     this.server.on({
@@ -65,6 +64,40 @@ export class Router {
       method: "put",
       handler: async (req, res) => {
         return await UserController.updateById(req, res);
+      },
+    });
+    //
+    //
+    // Regions
+    this.server.on({
+      path: "/regions",
+      method: "get",
+      handler: async (req, res) => {
+        return await RegionsController.getAll(req, res);
+      },
+    });
+
+    this.server.on({
+      path: "/regions/:id",
+      method: "get",
+      handler: async (req, res) => {
+        return await RegionsController.findById(req, res);
+      },
+    });
+
+    this.server.on({
+      path: "/regions/:id",
+      method: "put",
+      handler: async (req, res) => {
+        return await RegionsController.update(req, res);
+      },
+    });
+
+    this.server.on({
+      path: "/regions",
+      method: "post",
+      handler: async (req, res) => {
+        return await RegionsController.create(req, res);
       },
     });
   }
