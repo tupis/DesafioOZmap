@@ -66,16 +66,16 @@ export class RegisterUserDto {
   @ValidateNested({ each: true })
   @Type(() => Address)
   @IsOptional()
-  address: Address;
+  address?: Address;
 
   @IsObject()
   @ValidateNested({ each: true })
   @Type(() => Coordinates)
   @IsOptional()
-  coordinates: Coordinates;
+  coordinates?: Coordinates;
 
   @IsAddressOrCoordinates()
-  validation: boolean;
+  validation?: boolean;
 }
 
 //TODO: move to shared
@@ -87,11 +87,11 @@ export function IsAddressOrCoordinates(validationOptions?: ValidationOptions) {
       propertyName: propertyName,
       options: validationOptions,
       validator: {
-        validate(_: any, args: ValidationArguments) {
+        validate(_: any, args: ValidationArguments): boolean {
           const obj = args.object as RegisterUserDto;
           return (
-            (obj.address && !obj.coordinates) ||
-            (!obj.address && obj.coordinates)
+            (!!obj.address && !obj.coordinates) ||
+            (!obj.address && !!obj.coordinates)
           );
         },
         defaultMessage() {

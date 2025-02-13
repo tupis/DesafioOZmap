@@ -68,16 +68,16 @@ export class UpdateUserDto {
   @ValidateNested({ each: true })
   @Type(() => Address)
   @IsOptional()
-  address: Address;
+  address?: Address;
 
   @IsObject()
   @ValidateNested({ each: true })
   @Type(() => Coordinates)
   @IsOptional()
-  coordinates: Coordinates;
+  coordinates?: Coordinates;
 
   @IsAddressOrCoordinates()
-  validation: boolean;
+  validation?: boolean;
 }
 
 export function IsAddressOrCoordinates(validationOptions?: ValidationOptions) {
@@ -88,11 +88,11 @@ export function IsAddressOrCoordinates(validationOptions?: ValidationOptions) {
       propertyName: propertyName,
       options: validationOptions,
       validator: {
-        validate(_: any, args: ValidationArguments) {
+        validate(_: any, args: ValidationArguments): boolean {
           const obj = args.object as UpdateUserDto;
           return (
-            (obj.address && !obj.coordinates) ||
-            (!obj.address && obj.coordinates)
+            (!!obj.address && !obj.coordinates) ||
+            (!obj.address && !!obj.coordinates)
           );
         },
         defaultMessage() {
