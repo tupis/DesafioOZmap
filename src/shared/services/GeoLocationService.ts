@@ -60,9 +60,10 @@ interface PlusCode {
 }
 
 export class GeoLocationService {
-  private addressRepository = new AddressRepository();
   private googleMapsApiKey = process.env.MAPS_API_KEY;
   private googleMapsUrl = "https://maps.googleapis.com/maps/api/geocode/json";
+
+  constructor(private readonly addressRepository: AddressRepository) {}
 
   /**
    * Busca um endereço a partir das coordenadas usando índice geoespacial do MongoDB.

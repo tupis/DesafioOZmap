@@ -6,6 +6,7 @@ import { UserService } from "./services/UserService";
 export function getUserService(): UserService {
   const userRepository = new UserRepository();
   const addressRepository = new AddressRepository();
-  const geoLocationService = new GeoLocationService();
-  return new UserService(userRepository, addressRepository, geoLocationService);
+  const geoLocationService = new GeoLocationService(addressRepository);
+
+  return new UserService(userRepository, geoLocationService);
 }
