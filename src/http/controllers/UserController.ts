@@ -6,32 +6,36 @@ import { UpdateUserDto } from "@modules/user/dto/update-user.dto";
 class UserController {
   constructor(private readonly userService: UserService = getUserService()) {}
   async getAll(request: Request, response: Response): Promise<Response> {
-    const users = await this.userService.getAllUsers();
-    return response.status(200).json(users);
+    const { data, status } = await this.userService.getAllUsers();
+    return response.status(status).json(data);
   }
   async getById(request: Request, response: Response): Promise<Response> {
-    const user = await this.userService.getUserById(
+    const { data, status } = await this.userService.getUserById(
       request.params.id as string,
     );
-    return response.status(200).json(user);
+    return response.status(status).json(data);
   }
 
   async getByEmail(request: Request, response: Response): Promise<Response> {
-    const user = await this.userService.getUserByEmail(request.params.email);
-    return response.status(200).json(user);
+    const { data, status } = await this.userService.getUserByEmail(
+      request.params.email,
+    );
+    return response.status(status).json(data);
   }
 
   async deleteById(request: Request, response: Response): Promise<Response> {
-    await this.userService.deleteUserById(request.params.id as string);
-    return response.status(204).send();
+    const { data, status } = await this.userService.deleteUserById(
+      request.params.id as string,
+    );
+    return response.status(status).json(data);
   }
 
   async updateById(request: Request, response: Response): Promise<Response> {
-    const user = await this.userService.updateUserById(
+    const { data, status } = await this.userService.updateUserById(
       request.params.id as string,
       request.body as UpdateUserDto,
     );
-    return response.status(200).json(user);
+    return response.status(status).json(data);
   }
 }
 

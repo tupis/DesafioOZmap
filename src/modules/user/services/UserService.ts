@@ -1,19 +1,16 @@
 import { UserRepository } from "../repositories/UserRepository";
-import { User } from "../entities/User";
 import bcrypt from "bcryptjs";
 import { generateToken } from "@utils/jwt";
 import { LoginUserDto } from "../dto/login-user.dto";
 import { RegisterUserDto } from "../dto/register-user.dto";
 import { ResponseDto } from "@shared/dto/response.dto";
 import { HttpStatus } from "@statusCode";
-import { AddressRepository } from "../repositories/AddressRepository";
 import { GeoLocationService } from "@shared/services/GeoLocationService";
 import { UpdateUserDto } from "../dto/update-user.dto";
 
 export class UserService {
   constructor(
     private readonly userRepository: UserRepository,
-    private readonly addressRepository: AddressRepository,
     private readonly geoLocationService: GeoLocationService,
   ) {}
 
@@ -70,8 +67,11 @@ export class UserService {
     });
   }
 
-  async getAllUsers(): Promise<User[]> {
-    return await this.userRepository.findAll();
+  async getAllUsers(): Promise<ResponseDto> {
+    return new ResponseDto({
+      data: await this.userRepository.findAll(),
+      status: HttpStatus.OK,
+    });
   }
 
   async authenticateUser(data: LoginUserDto): Promise<ResponseDto> {
@@ -102,23 +102,42 @@ export class UserService {
     });
   }
 
-  async getUserById(id: string): Promise<User | null> {
-    return await this.userRepository.findById(id);
+  async getUserById(id: string): Promise<ResponseDto> {
+    return new ResponseDto({
+      data: await this.userRepository.findById(id),
+      status: HttpStatus.OK,
+    });
   }
 
-  async getUserByEmail(email: string): Promise<User | null> {
-    return await this.userRepository.findByEmail(email);
+  async getUserByEmail(email: string): Promise<ResponseDto> {
+    return new ResponseDto({
+      data: await this.userRepository.findByEmail(email),
+      status: HttpStatus.OK,
+    });
   }
 
-  async deleteUserById(id: string) {
-    const user = await this.getUserById(id);
-    return await this.userRepository.softDelete(user!._id);
+  async deleteUserById(id: string): Promise<ResponseDto> {
+    const user = await this.userRepository.findById(id);
+
+    if (!user) {
+      return new ResponseDto({
+        data: "Usuário não encontrado",
+        status: HttpStatus.NOT_FOUND,
+      });
+    }
+
+    await this.userRepository.softDelete(user!._id);
+
+    return new ResponseDto({
+      data: "Usuário deletado",
+      status: HttpStatus.NO_CONTENT,
+    });
   }
 
   async updateUserById(
     id: string,
     { address, coordinates, ...data }: UpdateUserDto,
-  ): Promise<User | null> {
+  ): Promise<ResponseDto> {
     let registerAddress = null;
 
     if (coordinates) {
@@ -130,13 +149,23 @@ export class UserService {
     }
 
     if (!registerAddress) {
-      return null;
+      return new ResponseDto({
+        data: "Endereço não encontrado",
+        status: HttpStatus.BAD_REQUEST,
+      });
     }
 
-    return await this.userRepository.updateById(id, {
+    const userData = {
       ...data,
       password: await bcrypt.hash(data.password, 8),
       address: registerAddress._id,
+    };
+
+    const savedUser = await this.userRepository.updateById(id, userData);
+
+    return new ResponseDto({
+      data: savedUser,
+      status: HttpStatus.OK,
     });
   }
 }
