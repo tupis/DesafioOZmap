@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "tsx watch src/main/main.ts",
-    "build": "tsc && tsc-alias",
+    "build": "tsc && tsc-alias && node scripts/fix-paths.js",
     "start": "node dist/main/main.js",
     "lint": "eslint 'src/**/*.ts'",
     "test": "jest",
