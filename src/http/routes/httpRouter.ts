@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import express, { Express, Request, Response, NextFunction } from "express";
 import { authMiddleware } from "@shared/middleware/auth";
+import { Logger } from "@shared/logger";
 
 type RouteHandler = {
   path: string;
@@ -34,6 +35,7 @@ export class HttpServer {
       ...middlewares,
       async (req: Request, res: Response) => {
         try {
+          Logger.info(`${method.toUpperCase()} on ${path}`);
           const result = await handler(req, res);
           if (!res.headersSent) {
             if (result && "body" in result) {
