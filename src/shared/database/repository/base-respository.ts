@@ -38,12 +38,15 @@ export class BaseRepository<T> {
 
   public async updateById(id: string, doc: Partial<T>): Promise<T | null> {
     const document = await this.findById(id);
+
     if (!document) return null;
 
-    return (await this.model
-      .findOneAndUpdate({ id }, doc)
+    (await this.model
+      .findOneAndUpdate({ _id: id }, doc)
       .lean()
       .exec()) as unknown as T;
+
+    return await this.findById(id);
   }
 }
 
