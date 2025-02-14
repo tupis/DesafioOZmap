@@ -2,7 +2,7 @@ import { ResponseDto } from "@shared/dto/response.dto";
 import { CreateRegionDto } from "../dto/create-region.dto";
 import { RegionRepository } from "../repositories/RegionRepository";
 import { HttpStatus } from "@statusCode";
-import { FindRegionsContainingPointDto } from "../dto/find-region-containing-point.dto";
+import { FindRegionsContainingPointDto } from "../dto/find-regions-containing-point.dto";
 import { FindRegionsNearPointDto } from "../dto/find-regions-near-point.dto";
 
 export class RegionService {

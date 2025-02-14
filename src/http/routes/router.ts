@@ -5,7 +5,7 @@ import { LoginUserDto } from "@modules/user/dto/login-user.dto";
 import { RegisterUserDto } from "@modules/user/dto/register-user.dto";
 import UserController from "@http/controllers/UserController";
 import RegionsController from "@http/controllers/RegionsController";
-import { FindRegionsContainingPointDto } from "@modules/region/dto/find-region-containing-point.dto";
+import { FindRegionsContainingPointDto } from "@modules/region/dto/find-regions-containing-point.dto";
 import { FindRegionsNearPointDto } from "@modules/region/dto/find-regions-near-point.dto";
 
 export class Router {

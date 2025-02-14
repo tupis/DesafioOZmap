@@ -4,7 +4,7 @@ import { RegionRepository } from "@modules/region/repositories/RegionRepository"
 import { CreateRegionDto } from "@modules/region/dto/create-region.dto";
 import { ResponseDto } from "@shared/dto/response.dto";
 import { HttpStatus } from "@statusCode";
-import { FindRegionsContainingPointDto } from "@modules/region/dto/find-region-containing-point.dto";
+import { FindRegionsContainingPointDto } from "@modules/region/dto/find-regions-containing-point.dto";
 import { FindRegionsNearPointDto } from "@modules/region/dto/find-regions-near-point.dto";
 import { Region } from "@modules/region/entity/Region";
 

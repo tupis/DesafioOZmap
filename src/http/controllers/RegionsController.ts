@@ -1,5 +1,5 @@
 import { CreateRegionDto } from "@modules/region/dto/create-region.dto";
-import { FindRegionsContainingPointDto } from "@modules/region/dto/find-region-containing-point.dto";
+import { FindRegionsContainingPointDto } from "@modules/region/dto/find-regions-containing-point.dto";
 import { FindRegionsNearPointDto } from "@modules/region/dto/find-regions-near-point.dto";
 import { UpdateRegionDto } from "@modules/region/dto/update-region.dto";
 import { getRegionService } from "@modules/region/RegionServiceFactory";
