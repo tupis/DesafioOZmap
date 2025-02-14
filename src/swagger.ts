@@ -12,66 +12,63 @@ function loadRoutes() {
   const routerPath = path.resolve(__dirname, "http/routes/router.ts");
   const paths: Record<string, any> = {};
 
-  if (fs.existsSync(routerPath)) {
-    const fileContent = fs.readFileSync(routerPath, "utf-8");
+  if (!fs.existsSync(routerPath)) {
+    console.error("❌ Arquivo de rotas não encontrado!");
+    return paths;
+  }
 
-    //FIXME: arrumar regex para capturar DTOs
-    const routeRegex =
-      /this\.server\.on\(\s*{\s*path:\s*["'`](.*?)["'`],\s*method:\s*["'`](.*?)["'`](?:[^}]*?middleware:\s*\[\s*validationMiddlewareDto\(([^)]+)\)\s*\])?/g;
+  const fileContent = fs.readFileSync(routerPath, "utf-8");
 
-    let match;
+  // 🔹 Expressão para capturar cada bloco de rota corretamente
+  const routeRegex = /this\.server\.on\s*\(\s*{([\s\S]*?)}\s*\)/g;
 
-    while ((match = routeRegex.exec(fileContent)) !== null) {
-      const routePath = match[1];
-      const method = match[2].toLowerCase();
-      const dtoName = match[3] || null;
+  let match;
+  let foundRoutes = false; // Flag para ver se a regex encontrou algo
 
-      if (!paths[routePath]) {
-        paths[routePath] = {};
-      }
+  while ((match = routeRegex.exec(fileContent)) !== null) {
+    foundRoutes = true;
+    const routeBlock = match[1];
 
-      const parameters: any[] = [];
-      const paramRegex = /:([a-zA-Z0-9_]+)/g;
-      let paramMatch;
-      while ((paramMatch = paramRegex.exec(routePath)) !== null) {
-        parameters.push({
-          name: paramMatch[1],
-          in: "path",
-          required: true,
-          schema: {
-            type: "string",
-          },
-        });
-      }
+    // 🔹 Extraindo path, method e middleware separadamente
+    const pathMatch = /path:\s*["'`](.*?)["'`]/.exec(routeBlock);
+    const methodMatch = /method:\s*["'`](.*?)["'`]/.exec(routeBlock);
+    const middlewareMatch =
+      /validationMiddlewareDto\(\s*([a-zA-Z0-9_]+)\s*\)/.exec(routeBlock);
 
-      const schemaReference = dtoName
-        ? { $ref: `#/components/schemas/${dtoName.toLowerCase()}` }
-        : null;
+    if (!pathMatch || !methodMatch) continue; // Se não tem path/method, ignora
 
-      paths[routePath][method] = {
-        summary: `${method.toUpperCase()} ${routePath}`,
-        tags: [routePath.split("/")[1] || "General"],
-        parameters: parameters.length > 0 ? parameters : undefined,
-        requestBody: schemaReference
-          ? {
-              required: true,
-              content: {
-                "application/json": {
-                  schema: schemaReference,
-                },
-              },
-            }
-          : undefined,
-        responses: {
-          200: {
-            description: "Sucesso",
-          },
-          400: {
-            description: "Erro de validação",
-          },
-        },
-      };
+    const routePath = pathMatch[1];
+    const method = methodMatch[1].toLowerCase();
+    const dtoName = middlewareMatch ? middlewareMatch[1] : null;
+
+    if (!paths[routePath]) {
+      paths[routePath] = {};
     }
+
+    paths[routePath][method] = {
+      summary: `${method.toUpperCase()} ${routePath}`,
+      tags: [routePath.split("/")[1] || "General"],
+      requestBody: dtoName
+        ? {
+            required: true,
+            content: {
+              "application/json": {
+                schema: { $ref: `#/components/schemas/${dtoName}` },
+              },
+            },
+          }
+        : undefined,
+      responses: {
+        200: { description: "Sucesso" },
+        400: { description: "Erro de validação" },
+      },
+    };
+  }
+
+  if (!foundRoutes) {
+    console.error(
+      "❌ Nenhuma rota foi encontrada! Verifique se o formato do arquivo está correto.",
+    );
   }
 
   return paths;
@@ -136,14 +133,11 @@ function extractDTOFields(filePath: string) {
   const properties: Record<string, any> = {};
 
   lines.forEach((line) => {
-    // Captura propriedades que usam decoradores do class-validator (@IsString(), @IsEmail(), etc.)
     const propertyMatch = line.match(/@(\w+)\(\)?\s*\n?\s*(\w+):\s*(\w+)/);
     if (propertyMatch) {
       const [, decorator, propertyName, propertyType] = propertyMatch;
       properties[propertyName] = { type: mapType(propertyType, decorator) };
-    }
-    // Captura propriedades sem decoradores
-    else {
+    } else {
       const basicMatch = line.match(/(\w+):\s*(\w+);/);
       if (basicMatch) {
         const [, propertyName, propertyType] = basicMatch;
