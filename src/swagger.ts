@@ -81,15 +81,29 @@ function loadRoutes() {
  * Captura automaticamente os DTOs da pasta `/modules/user/dto/`
  */
 function loadDTOs() {
-  const dtosPath = path.resolve(__dirname, "modules/user/dto");
+  const modulesPath = path.resolve(__dirname, "modules");
   const schemas: Record<string, any> = {};
 
-  function readFiles(dir: string) {
-    fs.readdirSync(dir).forEach((file) => {
-      const fullPath = path.join(dir, file);
+  function readDTOFiles(dir: string) {
+    fs.readdirSync(dir).forEach((fileOrDir) => {
+      const fullPath = path.join(dir, fileOrDir);
+
       if (fs.statSync(fullPath).isDirectory()) {
-        readFiles(fullPath);
-      } else if (file.endsWith(".dto.ts")) {
+        // Se encontrar a pasta `dto`, processa seus arquivos
+        if (fileOrDir === "dto") {
+          readFiles(fullPath);
+        } else {
+          // Continua a busca recursivamente
+          readDTOFiles(fullPath);
+        }
+      }
+    });
+  }
+
+  function readFiles(dtoDir: string) {
+    fs.readdirSync(dtoDir).forEach((file) => {
+      const fullPath = path.join(dtoDir, file);
+      if (fs.statSync(fullPath).isFile() && file.endsWith(".dto.ts")) {
         const capitalize = (phrase: string) =>
           phrase
             .split("-")
@@ -107,7 +121,7 @@ function loadDTOs() {
     });
   }
 
-  readFiles(dtosPath);
+  readDTOFiles(modulesPath);
 
   return schemas;
 }
