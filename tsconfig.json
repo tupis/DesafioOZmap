@@ -23,6 +23,6 @@
       "@swagger": ["src/swagger"]
     }
   },
-  "include": ["src/**/*.ts"],
-  "exclude": ["node_modules", "jest.config.ts", "scripts"]
+  "include": ["src/**/*.ts", ""],
+  "exclude": ["node_modules", "jest.config.ts", "scripts", "test/*"]
 }
