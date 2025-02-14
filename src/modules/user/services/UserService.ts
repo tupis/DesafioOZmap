@@ -63,7 +63,7 @@ export class UserService {
         user,
         token,
       },
-      status: HttpStatus.OK,
+      status: HttpStatus.CREATED,
     });
   }
 
