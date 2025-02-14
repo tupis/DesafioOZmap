@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { UserService } from "../services/UserService";
 import { UserRepository } from "../repositories/UserRepository";
-import { AddressRepository } from "../repositories/AddressRepository";
 import { GeoLocationService } from "@shared/services/GeoLocationService";
 import { User } from "../entities/User";
 import { RegisterUserDto } from "../dto/register-user.dto";
@@ -18,7 +17,6 @@ jest.mock("@utils/jwt");
 describe("UserService", () => {
   let userService: UserService;
   let userRepository: jest.Mocked<UserRepository>;
-  let addressRepository: jest.Mocked<AddressRepository>;
   let geoLocationService: jest.Mocked<GeoLocationService>;
 
   beforeEach(() => {
@@ -31,17 +29,12 @@ describe("UserService", () => {
       updateById: jest.fn(),
     } as any;
 
-    addressRepository = {} as any;
     geoLocationService = {
       getAddressFromCoordinates: jest.fn(),
       getCoordinatesFromAddress: jest.fn(),
     } as any;
 
-    userService = new UserService(
-      userRepository,
-      addressRepository,
-      geoLocationService,
-    );
+    userService = new UserService(userRepository, geoLocationService);
   });
 
   function generateUser(index: number = 1): User {
@@ -121,7 +114,7 @@ describe("UserService", () => {
       expect(response).toEqual(
         new ResponseDto({
           data: { user: generateUser(1), token: "mockedToken" },
-          status: HttpStatus.OK,
+          status: HttpStatus.CREATED,
         }),
       );
     });
@@ -144,7 +137,7 @@ describe("UserService", () => {
       expect(response).toEqual(
         new ResponseDto({
           data: { user: generateUser(), token: "mockedToken" },
-          status: HttpStatus.OK,
+          status: HttpStatus.CREATED,
         }),
       );
     });
@@ -249,7 +242,7 @@ describe("UserService", () => {
 
       const response = await userService.getAllUsers();
 
-      expect(response).toEqual(users);
+      expect(response.data).toEqual(users);
     });
   });
 
@@ -260,7 +253,7 @@ describe("UserService", () => {
 
       const response = await userService.getUserById("1");
 
-      expect(response).toEqual(user);
+      expect(response.data).toEqual(user);
     });
   });
 
@@ -293,7 +286,7 @@ describe("UserService", () => {
 
       const response = await userService.updateUserById("1", dto);
 
-      expect(response).toEqual({
+      expect(response.data).toEqual({
         ...user,
         name: "Updated User",
         password: "newhashedpassword",
@@ -307,7 +300,12 @@ describe("UserService", () => {
 
       const response = await userService.updateUserById("1", dto);
 
-      expect(response).toBeNull();
+      expect(response).toEqual(
+        new ResponseDto({
+          data: "Endereço não encontrado",
+          status: HttpStatus.BAD_REQUEST,
+        }),
+      );
     });
   });
 });
