@@ -167,7 +167,7 @@ describe("RegionService", () => {
       expect(response).toEqual(
         new ResponseDto({
           data: "Region not created",
-          status: HttpStatus.BAD_REQUEST,
+          status: HttpStatus.NOT_FOUND,
         }),
       );
     });

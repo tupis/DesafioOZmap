@@ -53,7 +53,7 @@ export class RegionService {
     if (!region)
       return new ResponseDto({
         data: "Region not created",
-        status: HttpStatus.BAD_REQUEST,
+        status: HttpStatus.NOT_FOUND,
       });
 
     return new ResponseDto({
