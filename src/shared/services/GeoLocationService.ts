@@ -62,8 +62,7 @@ interface PlusCode {
 export class GeoLocationService {
   private googleMapsApiKey = process.env.MAPS_API_KEY;
   private googleMapsUrl = "https://maps.googleapis.com/maps/api/geocode/json";
-
-  constructor(private readonly addressRepository: AddressRepository) {}
+  readonly addressRepository: AddressRepository = new AddressRepository();
 
   /**
    * Busca um endereço a partir das coordenadas usando índice geoespacial do MongoDB.
@@ -93,9 +92,7 @@ export class GeoLocationService {
       })
       .then((res) => res.data.results[0]);
 
-    const result = response.data.results[0];
-
-    const address = this.createModelFromResultGoogleAPI(result);
+    const address = this.createModelFromResultGoogleAPI(response);
     return await this.addressRepository.create(address);
   }
 
