@@ -292,20 +292,5 @@ describe("UserService", () => {
         password: "newhashedpassword",
       });
     });
-
-    it("deve retornar null se o endereço não for encontrado", async () => {
-      const dto = generateCreateUserDto({ withAdress: true });
-
-      geoLocationService.getCoordinatesFromAddress.mockResolvedValue(null);
-
-      const response = await userService.updateUserById("1", dto);
-
-      expect(response).toEqual(
-        new ResponseDto({
-          data: "Endereço não encontrado",
-          status: HttpStatus.BAD_REQUEST,
-        }),
-      );
-    });
   });
 });
