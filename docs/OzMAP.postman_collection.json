@@ -1,7 +1,322 @@
 {
 	"info": {
-		"name": "OzMAP",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"_postman_id": "deeaaac6-0492-4494-aa73-aeb8e3f34248",
+		"name": "OZMAP - API Documentada",
+		"description": "Coleção de requisições para a API OzMAP, contendo autenticação, gerenciamento de usuários e regiões.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "25308744"
 	},
-	"item": []
+	"item": [
+		{
+			"name": "🛠️ Autenticação",
+			"item": [
+				{
+					"name": "📌 Registrar Usuário (Coordenadas)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"exemplo@dominio.com\",\n    \"password\": \"senhaSegura\",\n    \"name\": \"Nome do Usuário\",\n    \"coordinates\": {\n        \"latitude\": -2.511923,\n        \"longitude\": -44.227153\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrlAuth}}/register",
+							"host": [
+								"{{baseUrlAuth}}"
+							],
+							"path": [
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "📌 Registrar Usuário (Endereço)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"exemplo@dominio.com\",\n    \"password\": \"senhaSegura\",\n    \"name\": \"Nome do Usuário\",\n    \"address\": {\n        \"street\": \"Rua Exemplo\",\n        \"number\": \"100\",\n        \"city\": \"Cidade Exemplo\",\n        \"state\": \"Estado Exemplo\",\n        \"country\": \"Brasil\",\n        \"zipCode\": \"00000-000\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrlAuth}}/register",
+							"host": [
+								"{{baseUrlAuth}}"
+							],
+							"path": [
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "🔑 Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"exemplo@dominio.com\",\n  \"password\": \"senhaSegura\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrlAuth}}/login",
+							"host": [
+								"{{baseUrlAuth}}"
+							],
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints para autenticação e criação de usuários."
+		},
+		{
+			"name": "👤 Usuários",
+			"item": [
+				{
+					"name": "📜 Listar Todos os Usuários",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "🔍 Buscar Usuário por ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/{{userId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"{{userId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "📧 Buscar Usuário por Email",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/email/{{email}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"email",
+								"{{email}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "🗑️ Excluir Usuário por ID",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/{{userId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"{{userId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "✏️ Atualizar Usuário (Coordenadas)",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"latitude\": -2.5000,\n    \"longitude\": -44.2000\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users/{{userId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"{{userId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints para gerenciamento de usuários."
+		},
+		{
+			"name": "📍 Regiões",
+			"item": [
+				{
+					"name": "📜 Listar Todas as Regiões",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/regions",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"regions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "➕ Criar Nova Região",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Região Nova\",\n  \"coordinates\": [\n    [-46.633309, -23.550520],\n    [-46.625290, -23.545100],\n    [-46.620500, -23.552000]\n  ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/regions",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"regions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "🔍 Buscar Região por ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/regions/{{regionId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"regions",
+								"{{regionId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "📌 Encontrar Regiões Contendo um Ponto",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"latitude\": -23.5502,\n    \"longitude\": -46.6205\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/regions/find-regions-containing-point",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"regions",
+								"find-regions-containing-point"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "🗑️ Excluir Região por ID",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/regions/{{regionId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"regions",
+								"{{regionId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints para gerenciamento de regiões."
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{accessToken}}",
+				"type": "string"
+			}
+		]
+	}
 }
