@@ -7,6 +7,7 @@ import { ResponseDto } from "@shared/dto/response.dto";
 import { HttpStatus } from "@statusCode";
 import { GeoLocationService } from "@shared/services/GeoLocationService";
 import { UpdateUserDto } from "../dto/update-user.dto";
+import { User } from "../entities/User";
 
 export class UserService {
   constructor(
@@ -103,8 +104,16 @@ export class UserService {
   }
 
   async getUserById(id: string): Promise<ResponseDto> {
+    const data = await this.userRepository.findById(id);
+
+    if (!data)
+      return new ResponseDto({
+        data: "Usuário não encontrado",
+        status: HttpStatus.NOT_FOUND,
+      });
+
     return new ResponseDto({
-      data: await this.userRepository.findById(id),
+      data,
       status: HttpStatus.OK,
     });
   }
@@ -148,18 +157,12 @@ export class UserService {
         await this.geoLocationService.getCoordinatesFromAddress(address);
     }
 
-    if (!registerAddress) {
-      return new ResponseDto({
-        data: "Endereço não encontrado",
-        status: HttpStatus.BAD_REQUEST,
-      });
-    }
-
-    const userData = {
+    const userData: Partial<User> & { password: string } = {
       ...data,
       password: await bcrypt.hash(data.password, 8),
-      address: registerAddress._id,
     };
+
+    if (registerAddress) userData.address = registerAddress._id;
 
     const savedUser = await this.userRepository.updateById(id, userData);
 
