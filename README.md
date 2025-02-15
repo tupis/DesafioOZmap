@@ -17,7 +17,7 @@ Antes de iniciar, certifique-se de ter os seguintes programas instalados:
 1. Clone o repositório:
 
    ```sh
-   git clone https://github.com/tupis/ozmap-api.git
+   git clone https://github.com/tupis/DesafioOZmap.git
    cd ozmap-api
    ```
 
